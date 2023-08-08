@@ -8,6 +8,7 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
@@ -16,31 +17,60 @@ def create_app(test_config=None):
     """
     @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
     """
-
+    CORS(app)
     """
     @TODO: Use the after_request decorator to set Access-Control-Allow
     """
-
+    @app.after_request
+    def after_request(response):
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "*")
+        response.headers.add("Access-Control-Allow-Methods", "*")
+        return response
     """
     @TODO:
     Create an endpoint to handle GET requests
     for all available categories.
     """
+    @app.route('/categories',  methods=['GET'])
+    def get_categories():
+        categories = Category.query.all()
+        res = []
+        for category in categories:
+            res.append({
+                "id": category.id,
+                "type": category.type
+            })
 
-
+        return jsonify(res)
     """
     @TODO:
     Create an endpoint to handle GET requests for questions,
     including pagination (every 10 questions).
     This endpoint should return a list of questions,
     number of total questions, current category, categories.
+    
 
     TEST: At this point, when you start the application
     you should see questions and categories generated,
     ten questions per page and pagination at the bottom of the screen for three pages.
     Clicking on the page numbers should update the questions.
     """
+    @app.route('/questions',  methods=['GET'])
+    def get_questions():
+        page = request.args.get('page', 1, type=int)
+        start = (page - 1) * 10
+        end = start + 10
 
+        questions = Question.query.all()
+        paginated_questions = [question.format()
+                               for question in questions[start:end]]
+
+        return jsonify({
+            'success': True,
+            'questions': paginated_questions,
+            'total_questions': len(paginated_questions)
+        })
     """
     @TODO:
     Create an endpoint to DELETE question using a question ID.
@@ -99,4 +129,3 @@ def create_app(test_config=None):
     """
 
     return app
-
