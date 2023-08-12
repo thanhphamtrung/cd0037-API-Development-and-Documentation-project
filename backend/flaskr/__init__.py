@@ -32,17 +32,22 @@ def create_app(test_config=None):
     Create an endpoint to handle GET requests
     for all available categories.
     """
-    @app.route('/categories',  methods=['GET'])
+    @app.route('/categories', methods=['GET'])
     def get_categories():
-        categories = Category.query.all()
-        res = []
-        for category in categories:
-            res.append({
-                "id": category.id,
-                "type": category.type
-            })
+        try:
+            categories = Category.query.all()
+            res = []
+            for category in categories:
+                res.append({
+                    "id": category.id,
+                    "type": category.type
+                })
 
-        return jsonify(res)
+            return jsonify({"success": True, "categories": res})
+        except Exception as e:
+            # Handle any unexpected errors
+            print(e)
+            abort(500, description='An error occurred while fetching categories.')
     """
     @TODO:
     Create an endpoint to handle GET requests for questions,
@@ -58,19 +63,24 @@ def create_app(test_config=None):
     """
     @app.route('/questions',  methods=['GET'])
     def get_questions():
-        page = request.args.get('page', 1, type=int)
-        start = (page - 1) * 10
-        end = start + 10
+        try:
+            page = request.args.get('page', 1, type=int)
+            start = (page - 1) * 10
+            end = start + 10
 
-        questions = Question.query.all()
-        paginated_questions = [question.format()
-                               for question in questions[start:end]]
+            questions = Question.query.all()
+            paginated_questions = [question.format()
+                                   for question in questions[start:end]]
 
-        return jsonify({
-            'success': True,
-            'questions': paginated_questions,
-            'total_questions': len(paginated_questions)
-        })
+            return jsonify({
+                'success': True,
+                'questions': paginated_questions,
+                'total_questions': len(questions)
+            })
+        except Exception as e:
+            # Handle any unexpected errors
+            print(e)
+            abort(500, description='An error occurred while fetching questions.')
     """
     @TODO:
     Create an endpoint to DELETE question using a question ID.
