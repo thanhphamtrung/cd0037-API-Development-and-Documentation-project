@@ -71,6 +71,145 @@ One note before you delve into your tasks: for each endpoint, you are expected t
 
 You will need to provide detailed documentation of your API endpoints including the URL, request parameters, and the response body. Use the example below as a reference.
 
+1. `GET '/categories'`
+
+- Fetches all available categories.
+- Request Arguments: None
+- Returns: An object with two keys, `success` and `categories`, where `categories` is an array of objects with keys `id` and `type`.
+
+```json
+{
+  "success": True,
+  "categories": [
+    {"id": 1, "type": "Science"},
+    {"id": 2, "type": "Art"}
+  ]
+}
+```
+
+2. `GET '/questions'`
+
+- Fetches questions with pagination (every 10 questions).
+- Request Arguments: `page` (optional, default value is 1)
+- Returns: An object with keys `success`, `questions`, and `total_questions`.
+
+```json
+{
+  "success": True,
+  "questions": [
+    {
+      "question": "What is the capital of France?",
+      "answer": "Paris",
+      "category": 3,
+      "difficulty": 2
+    }
+  ],
+  "total_questions": 50
+}
+```
+
+3. `DELETE '/questions/int:question_id'`
+
+- Deletes a question using the question ID.
+- Request Arguments: `question_id`
+- Returns: An object with keys `success` and `deleted` (the ID of the deleted question).
+
+```json
+{
+  "success": True,
+  "deleted": 10
+}
+```
+
+4. `POST '/questions'`
+
+- Posts a new question with required fields.
+- Request Body: `question`, `answer`, `category`, `difficulty`
+- Returns: An object with keys `success` and `created` (the ID of the created question).
+
+```json
+{
+  "success": True,
+  "created": 30
+}
+```
+
+5. `POST '/questions/search'`
+
+- Searches questions based on a search term.
+- Request Body: `searchTerm`
+- Returns: An object with keys `success`, `questions`, and `total_questions`.
+
+```json
+{
+  "success": True,
+  "questions": [
+    {
+      "question": "What is the title of the book?",
+      "answer": "The Title",
+      "category": 1,
+      "difficulty": 3
+    }
+  ],
+  "total_questions": 5
+}
+```
+
+6. `GET '/categories/int:category_id/questions'`
+
+- Gets questions based on category.
+- Request Arguments: `category_id`
+- Returns: An object with keys `success`, `questions`, `total_questions`, and `current_category`.
+
+```json
+{
+  "success": True,
+  "questions": [
+    {
+      "question": "Who painted the Mona Lisa?",
+      "answer": "Leonardo da Vinci",
+      "category": 2,
+      "difficulty": 4
+    }
+  ],
+  "total_questions": 20,
+  "current_category": "Art"
+}
+```
+
+7. `POST '/quizzes'`
+
+- Gets questions to play the quiz.
+- Request Body: `previous_questions` (optional), `quiz_category` (required)
+- Returns: An object with keys `success` and `question`.
+
+```json
+{
+  "success": True,
+  "question": {
+    "question": "What is the capital of Italy?",
+    "answer": "Rome",
+    "category": 3,
+    "difficulty": 3
+  }
+}
+```
+
+`## Error Handlers`
+
+- 400: Bad request.
+- 404: Resource not found.
+- 422: Unprocessable entity.
+- 500: Internal server error.
+
+```json
+{
+  "success": False,
+  "error": 404,
+  "message": "Resource not found."
+}
+```
+
 ### Documentation Example
 
 `GET '/api/v1.0/categories'`

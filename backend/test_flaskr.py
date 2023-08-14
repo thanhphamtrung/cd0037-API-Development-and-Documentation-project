@@ -39,6 +39,15 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['success'])
         self.assertTrue(len(data['categories']) > 0)
 
+    def test_get_categories_failure(self):
+        res = self.client().get('/categories')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 500) 
+        self.assertEqual(data['success'], False)
+        self.assertIn('message', data)
+        self.assertEqual(data['message'], 'An error occurred while fetching categories.')
+
     # Test for GET /questions
     def test_get_questions(self):
         response = self.client().get('/questions')
@@ -48,6 +57,16 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['success'])
         self.assertTrue(len(data['questions']) > 0)
         self.assertTrue(data['total_questions'] > 0)
+    
+    def test_get_questions_failure(self):
+        res = self.client().get('/questions?page=invalid_page_number')
+        data = res.get_json()
+
+        self.assertEqual(res.status_code, 500) 
+        self.assertEqual(data['success'], False)
+        self.assertIn('message', data)
+        self.assertEqual(data['message'], 'An error occurred while fetching questions.')
+
 
     # Test for POST /questions
     def test_create_question(self):
